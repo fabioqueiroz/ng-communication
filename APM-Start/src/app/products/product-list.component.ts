@@ -9,7 +9,7 @@ import { ProductService } from './product.service';
 })
 export class ProductListComponent implements OnInit {
     pageTitle: string = 'Product List';
-    listFilter: string;
+    // listFilter: string;
     showImage: boolean;
 
     imageWidth: number = 50;
@@ -18,6 +18,16 @@ export class ProductListComponent implements OnInit {
 
     filteredProducts: IProduct[];
     products: IProduct[];
+
+    private _listFilter: string;
+    get listFilter(): string {
+        return this._listFilter;
+    }
+
+    set listFilter(value: string) {
+        this._listFilter = value;
+        this.performFilter(this.listFilter);
+    }
 
     constructor(private productService: ProductService) { }
 
@@ -43,4 +53,11 @@ export class ProductListComponent implements OnInit {
             this.filteredProducts = this.products;
         }
     }
+
+    // used for the long two way binding
+
+    // onFilterChange(filter: string) : void {
+    //     this.listFilter = filter;
+    //     this.performFilter(this.listFilter);
+    // }
 }
