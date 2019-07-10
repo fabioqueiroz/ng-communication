@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, ViewChildren, 
 import { IProduct } from './product';
 import { ProductService } from './product.service';
 import { NgModel } from '@angular/forms';
+import { NgForOf } from '@angular/common';
 
 @Component({
     templateUrl: './product-list.component.html',
@@ -10,7 +11,7 @@ import { NgModel } from '@angular/forms';
 })
 export class ProductListComponent implements OnInit, AfterViewInit {
     pageTitle: string = 'Product List';
-    // listFilter: string;
+    listFilter: string;
     showImage: boolean;
 
     imageWidth: number = 50;
@@ -20,17 +21,22 @@ export class ProductListComponent implements OnInit, AfterViewInit {
     filteredProducts: IProduct[];
     products: IProduct[];
 
-    private _listFilter: string;
-    get listFilter(): string {
-        return this._listFilter;
-    }
+    // using @ViewChild('filterElement') 
+    // private _listFilter: string;
+    // get listFilter(): string {
+    //     return this._listFilter;
+    // }
 
-    set listFilter(value: string) {
-        this._listFilter = value;
-        this.performFilter(this.listFilter);
-    }
+    // set listFilter(value: string) {
+    //     this._listFilter = value;
+    //     this.performFilter(this.listFilter);
+    // }
 
-    @ViewChild('filterElement') filterElementRef: ElementRef; // #filterElement 
+    // #filterElement, using the setter; accesses the native element
+    @ViewChild('filterElement') filterElementRef: ElementRef; 
+
+    // must be subscribed to value changes; accesses the data structure
+    @ViewChild(NgModel) filterWithNgModel: NgModel; 
 
     // both are equivalent and generate a querylist to be iterated
     // @ViewChildren('filterElement', 'secondElement') filterElementRefs: QueryList<ElementRef>; // #filterElement and #secondElement 
@@ -45,13 +51,18 @@ export class ProductListComponent implements OnInit, AfterViewInit {
             
             this.filterElementRef.nativeElement.focus();
         }
+
+        // using @ViewChild(NgModel) 
+        this.filterWithNgModel.valueChanges.subscribe(() => {
+            this.performFilter(this.listFilter);
+        })
     }
 
     ngOnInit(): void {
         this.productService.getProducts().subscribe(
             (products: IProduct[]) => {
                 this.products = products;
-                this.performFilter(this.listFilter);
+                this.performFilter(this.listFilter); 
             },
             (error: any) => this.errorMessage = <any>error
         );
