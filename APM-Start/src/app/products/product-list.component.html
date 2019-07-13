@@ -19,7 +19,8 @@
         </div> -->
         <div class='row'>      
             <pm-criteria class='col-md-10' #filterCriteria
-                [displayDetail]="includeDetail" [hitCount]="filteredProducts?.length">
+                [displayDetail]="includeDetail" [hitCount]="filteredProducts?.length"
+                (filterValueChange)="filterInputFromChild($event)">
                 
             </pm-criteria>
             <!-- <h4>{{filterCriteria.listFilter}}</h4> -->

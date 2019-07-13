@@ -9,13 +9,24 @@ import { IProduct } from '../../products/product';
 })
 export class CriteriaComponent implements OnInit, AfterViewInit, OnChanges {
   
-  listFilter: string;
+  // listFilter: string; // commented out to be redefined with a get/set for the @Output()
   hitMessage: string;
   
   @ViewChild('filterElement') filterElementRef: ElementRef; 
   @Input() displayDetail: boolean;
   @Input() hitCount: number;
-  
+  @Output() filterValueChange = new EventEmitter<string>();
+
+  // technique used becuase ngOnChanges is being currenctly used for an @Input() property
+  private _listFilter: string;
+  get listFilter(): string {
+    return this._listFilter;
+  }
+  set listFilter(value : string) {
+    this._listFilter = value;
+    this.filterValueChange.emit(value);
+  }
+
   constructor() { }
   
   ngAfterViewInit(): void {
@@ -39,6 +50,4 @@ export class CriteriaComponent implements OnInit, AfterViewInit, OnChanges {
       this.hitMessage = 'Hits (using OnChanges): ' + this.hitCount;
     }
   }
-  
-
 }

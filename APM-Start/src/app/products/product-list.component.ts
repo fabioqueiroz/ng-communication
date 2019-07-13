@@ -89,6 +89,9 @@ export class ProductListComponent implements OnInit, AfterViewInit {
         }
     }
 
+    filterInputFromChild(value) {
+        this.performFilter(value);
+    }
 
     // used for the long two way binding
 
