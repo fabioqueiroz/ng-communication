@@ -18,10 +18,11 @@
             </div>
         </div> -->
         <div class='row'>      
-            <pm-criteria class='col-md-10' 
+            <pm-criteria class='col-md-10' #filterCriteria
                 [displayDetail]="includeDetail" [hitCount]="filteredProducts?.length">
-        
+                
             </pm-criteria>
+            <!-- <h4>{{filterCriteria.listFilter}}</h4> -->
         </div>
 
         <div class='table-responsive'>

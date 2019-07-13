@@ -4,6 +4,7 @@ import { IProduct } from './product';
 import { ProductService } from './product.service';
 import { NgModel } from '@angular/forms';
 import { NgForOf } from '@angular/common';
+import { CriteriaComponent } from '../shared/criteria/criteria.component';
 
 @Component({
     templateUrl: './product-list.component.html',
@@ -18,6 +19,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
     imageWidth: number = 50;
     imageMargin: number = 2;
     errorMessage: string;
+    parentListFilter: string;
 
     filteredProducts: IProduct[];
     products: IProduct[];
@@ -42,6 +44,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
     // both are equivalent and generate a querylist to be iterated
     // @ViewChildren('filterElement', 'secondElement') filterElementRefs: QueryList<ElementRef>; // #filterElement and #secondElement 
     // @ViewChildren(NgModel) filterElementRefs: QueryList<NgModel>;
+    @ViewChild(CriteriaComponent) fromFilterCriteria: CriteriaComponent;
 
     constructor(private productService: ProductService) { }
 
@@ -59,13 +62,15 @@ export class ProductListComponent implements OnInit, AfterViewInit {
         // this.filterWithNgModel.valueChanges.subscribe(() => {
         //     this.performFilter(this.listFilter);
         // })
+
+        this.parentListFilter = this.fromFilterCriteria.listFilter;
     }
 
     ngOnInit(): void {
         this.productService.getProducts().subscribe(
             (products: IProduct[]) => {
                 this.products = products;
-                this.performFilter();
+                this.performFilter(this.parentListFilter);
             },
             (error: any) => this.errorMessage = <any>error
         );
