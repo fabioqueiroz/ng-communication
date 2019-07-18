@@ -17,7 +17,7 @@ export class CriteriaComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() hitCount: number;
   @Output() filterValueChange = new EventEmitter<string>();
 
-  // technique used becuase ngOnChanges is being currenctly used for an @Input() property
+  // technique used because ngOnChanges is being currenctly used for an @Input() property
   private _listFilter: string;
   get listFilter(): string {
     return this._listFilter;

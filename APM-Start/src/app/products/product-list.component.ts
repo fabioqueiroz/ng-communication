@@ -5,6 +5,7 @@ import { ProductService } from './product.service';
 import { NgModel } from '@angular/forms';
 import { NgForOf } from '@angular/common';
 import { CriteriaComponent } from '../shared/criteria/criteria.component';
+import { ProductParameterService } from './product-parameter.service';
 
 @Component({
     templateUrl: './product-list.component.html',
@@ -13,7 +14,7 @@ import { CriteriaComponent } from '../shared/criteria/criteria.component';
 export class ProductListComponent implements OnInit, AfterViewInit {
     pageTitle: string = 'Product List';
     // listFilter: string; // moved to criteria component
-    showImage: boolean;
+    // showImage: boolean; // now comming from the parameter service
     includeDetail: boolean = true;
 
     imageWidth: number = 50;
@@ -23,6 +24,13 @@ export class ProductListComponent implements OnInit, AfterViewInit {
 
     filteredProducts: IProduct[];
     products: IProduct[];
+
+    get showImage(): boolean {
+        return this._productParameterService.showImage;
+    }
+    set showImage(value: boolean) {
+        this._productParameterService.showImage = value;
+    }
 
     // using @ViewChild('filterElement') 
     // private _listFilter: string;
@@ -46,7 +54,8 @@ export class ProductListComponent implements OnInit, AfterViewInit {
     // @ViewChildren(NgModel) filterElementRefs: QueryList<NgModel>;
     @ViewChild(CriteriaComponent) fromFilterCriteria: CriteriaComponent;
 
-    constructor(private productService: ProductService) { }
+    constructor(private _productService: ProductService, 
+        private _productParameterService: ProductParameterService) { }
 
     ngAfterViewInit(): void {
 
@@ -67,10 +76,11 @@ export class ProductListComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.productService.getProducts().subscribe(
+        this._productService.getProducts().subscribe(
             (products: IProduct[]) => {
                 this.products = products;
-                this.performFilter(this.parentListFilter);
+                this.fromFilterCriteria.listFilter = this._productParameterService.filterBy ;
+                // this.performFilter(this.parentListFilter); // with the parameter service, it only needs to be called from filterInputFromChild
             },
             (error: any) => this.errorMessage = <any>error
         );
@@ -90,6 +100,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
     }
 
     filterInputFromChild(value) {
+        this._productParameterService.filterBy = value;
         this.performFilter(value);
     }
 
