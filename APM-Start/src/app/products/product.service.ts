@@ -63,6 +63,12 @@ export class ProductService {
         return this.http.delete<IProduct>(url, { headers: headers} )
                         .pipe(
                             tap(data => console.log('deleteProduct: ' + id)),
+                            tap(data => {
+                                const foundIndex = this._products.findIndex(item => item.id === id);
+                                if (foundIndex > -1) {
+                                    this._products.splice(foundIndex, 1);
+                                }
+                            }),
                             catchError(this.handleError)
                         );
     }
@@ -72,6 +78,7 @@ export class ProductService {
         return this.http.post<IProduct>(this._productsUrl, product,  { headers: headers} )
                         .pipe(
                             tap(data => console.log('createProduct: ' + JSON.stringify(data))),
+                            tap(data => this._products.push(data)),
                             catchError(this.handleError)
                         );
     }
