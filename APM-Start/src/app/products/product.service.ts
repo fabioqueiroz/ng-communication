@@ -15,6 +15,7 @@ export class ProductService {
     // created for generating a state management service, allowing
     // the list to be retained and shared between the components
     private _products: IProduct[]; 
+    currentProduct: IProduct | null;
 
     constructor(private http: HttpClient) { }
 
@@ -67,6 +68,7 @@ export class ProductService {
                                 const foundIndex = this._products.findIndex(item => item.id === id);
                                 if (foundIndex > -1) {
                                     this._products.splice(foundIndex, 1);
+                                    this.currentProduct = null;
                                 }
                             }),
                             catchError(this.handleError)
@@ -78,7 +80,10 @@ export class ProductService {
         return this.http.post<IProduct>(this._productsUrl, product,  { headers: headers} )
                         .pipe(
                             tap(data => console.log('createProduct: ' + JSON.stringify(data))),
-                            tap(data => this._products.push(data)),
+                            tap(data => {
+                                this._products.push(data);
+                                this.currentProduct = data;
+                            }),
                             catchError(this.handleError)
                         );
     }
