@@ -8,14 +8,19 @@ import { IProduct } from '../product';
 })
 export class ProductShellDetailComponent implements OnInit {
     pageTitle: string = 'Product Detail';
+    product: IProduct | null;
 
-    get product(): IProduct | null {
-        return this._productService.currentProduct;
-    }
+    // p8
+    // get product(): IProduct | null {
+    //     return this._productService.currentProduct; 
+    // }
 
     constructor(private _productService: ProductService) { }
 
     ngOnInit() {
+        this._productService.selectedProductchanges$.subscribe(selectedProduct =>
+            this.product = selectedProduct
+        );
     }
 
 }

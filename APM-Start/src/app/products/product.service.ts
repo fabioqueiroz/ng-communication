@@ -8,6 +8,7 @@ import { of } from 'rxjs/observable/of';
 import { catchError, tap } from 'rxjs/operators';
 
 import { IProduct } from './product';
+import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class ProductService {
@@ -15,9 +16,17 @@ export class ProductService {
     // created for generating a state management service, allowing
     // the list to be retained and shared between the components
     private _products: IProduct[]; 
-    currentProduct: IProduct | null;
+    // used for STM in p8
+    // currentProduct: IProduct | null; 
+    private _selectedProductSource = new Subject<IProduct | null>();
+    public selectedProductchanges$ = this._selectedProductSource.asObservable(); // exposes the read only of the subject
+
 
     constructor(private http: HttpClient) { }
+
+    changeSelectedProduct(selectedProduct: IProduct | null): void {
+        this._selectedProductSource.next(selectedProduct);
+    }
 
     getProducts(): Observable<IProduct[]> {
         if (this._products) {
@@ -68,7 +77,8 @@ export class ProductService {
                                 const foundIndex = this._products.findIndex(item => item.id === id);
                                 if (foundIndex > -1) {
                                     this._products.splice(foundIndex, 1);
-                                    this.currentProduct = null;
+                                    // this.currentProduct = null; // p8
+                                    this.changeSelectedProduct(null);
                                 }
                             }),
                             catchError(this.handleError)
@@ -82,7 +92,8 @@ export class ProductService {
                             tap(data => console.log('createProduct: ' + JSON.stringify(data))),
                             tap(data => {
                                 this._products.push(data);
-                                this.currentProduct = data;
+                                // this.currentProduct = data; // p8
+                                this.changeSelectedProduct(data);
                             }),
                             catchError(this.handleError)
                         );
