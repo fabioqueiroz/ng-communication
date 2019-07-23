@@ -9,6 +9,7 @@ import { catchError, tap } from 'rxjs/operators';
 
 import { IProduct } from './product';
 import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class ProductService {
@@ -16,10 +17,14 @@ export class ProductService {
     // created for generating a state management service, allowing
     // the list to be retained and shared between the components
     private _products: IProduct[]; 
+
     // used for STM in p8
     // currentProduct: IProduct | null; 
-    private _selectedProductSource = new Subject<IProduct | null>();
-    public selectedProductchanges$ = this._selectedProductSource.asObservable(); // exposes the read only of the subject
+
+    // p9: exposes the read only of the subject
+    // private _selectedProductSource = new Subject<IProduct | null>();
+    private _selectedProductSource = new BehaviorSubject<IProduct | null>(null);
+    public selectedProductchanges$ = this._selectedProductSource.asObservable(); 
 
 
     constructor(private http: HttpClient) { }
